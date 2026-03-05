@@ -1,6 +1,6 @@
 body{
 
-font-family: Helvetica, Arial, sans-serif;
+font-family: Helvetica, Arial;
 background:#0f0f0f;
 color:white;
 margin:0;
@@ -21,11 +21,17 @@ letter-spacing:2px;
 
 }
 
+.subtitle{
+
+color:#888;
+
+}
+
 nav a{
 
 margin-right:20px;
-color:#ccc;
 text-decoration:none;
+color:#aaa;
 
 }
 
@@ -35,22 +41,14 @@ color:white;
 
 }
 
-.subtitle{
+input{
 
-color:#888;
-
-}
-
-.welcome{
-
-max-width:600px;
-line-height:1.6;
-
-}
-
-.list{
-
-margin-top:30px;
+padding:10px;
+background:#111;
+border:1px solid #333;
+color:white;
+width:300px;
+margin-bottom:20px;
 
 }
 
@@ -61,12 +59,22 @@ border-bottom:1px solid #222;
 
 }
 
-input{
+.item:hover{
 
-background:#111;
-border:1px solid #333;
-color:white;
-padding:10px;
-width:300px;
+background:#151515;
+
+}
+
+.statbox{
+
+display:flex;
+gap:60px;
+margin-top:20px;
+
+}
+
+.statbox h4{
+
+font-size:32px;
 
 }
