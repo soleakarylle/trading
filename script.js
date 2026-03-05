@@ -1,30 +1,80 @@
-const trades = [
-{pair:"BTCUSD",direction:"BUY",profit:120},
-{pair:"EURUSD",direction:"SELL",profit:-30},
-{pair:"NAS100",direction:"BUY",profit:80},
-{pair:"XAUUSD",direction:"BUY",profit:60}
-];
+const trader = "vndyne";
+
+const proxy = "https://api.allorigins.win/raw?url=";
+const encoraURL = `https://encora.it/traders/${trader}`;
+
+async function loadTrader() {
+
+try {
+
+const response = await fetch(proxy + encodeURIComponent(encoraURL));
+const html = await response.text();
+
+const parser = new DOMParser();
+const doc = parser.parseFromString(html, "text/html");
+
+let rows = doc.querySelectorAll("table tbody tr");
 
 const table = document.querySelector("#trades tbody");
+table.innerHTML = "";
 
-trades.forEach(t=>{
-let row = `<tr>
-<td>${t.pair}</td>
-<td>${t.direction}</td>
-<td>${t.profit}</td>
-</tr>`;
-table.innerHTML += row;
+let profits = [];
+let labels = [];
+
+rows.forEach(row => {
+
+let cols = row.querySelectorAll("td");
+
+if(cols.length > 2){
+
+let pair = cols[0].innerText;
+let direction = cols[1].innerText;
+let profit = cols[2].innerText;
+
+table.innerHTML += `
+<tr>
+<td>${pair}</td>
+<td>${direction}</td>
+<td>${profit}</td>
+</tr>
+`;
+
+profits.push(parseFloat(profit));
+labels.push(pair);
+
+}
+
 });
 
-const ctx = document.getElementById('profitChart');
+createChart(labels, profits);
+
+}
+
+catch(err){
+
+console.error(err);
+
+}
+
+}
+
+function createChart(labels,data){
+
+const ctx = document.getElementById("profitChart");
 
 new Chart(ctx,{
-type:'line',
+type:"line",
 data:{
-labels: trades.map(t=>t.pair),
+labels:labels,
 datasets:[{
-label:'Profit',
-data: trades.map(t=>t.profit)
+label:"Profit",
+data:data
 }]
 }
 });
+
+}
+
+loadTrader();
+
+setInterval(loadTrader,300000);
