@@ -1,17 +1,16 @@
-const traderURL = "https://encora.it/traders/vndyne";
+async function loadTraderData() {
 
-async function fetchTraderData() {
     try {
+        const response = await fetch("trader.html");
+        const data = await response.text();
 
-        const response = await fetch(traderURL);
-        const text = await response.text();
-
-        document.getElementById("traderData").innerHTML = text;
+        document.getElementById("traderData").innerHTML = data;
 
     } catch (error) {
         document.getElementById("traderData").innerHTML =
-            "Unable to fetch trader data.";
+        "Trader data could not load.";
     }
+
 }
 
-fetchTraderData();
+loadTraderData();
