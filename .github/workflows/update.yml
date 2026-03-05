@@ -1,0 +1,16 @@
+name: Update Trader Data
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch Trader Page
+        run: curl https://encora.it/traders/vndyne > trader.html
