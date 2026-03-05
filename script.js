@@ -1,80 +1,40 @@
-const trader = "vndyne";
+function renderList(list, element){
 
-const proxy = "https://api.allorigins.win/raw?url=";
-const encoraURL = `https://encora.it/traders/${trader}`;
+const container = document.getElementById(element);
 
-async function loadTrader() {
+if(!container) return;
 
-try {
+list.forEach(item => {
 
-const response = await fetch(proxy + encodeURIComponent(encoraURL));
-const html = await response.text();
+let div = document.createElement("div");
+div.className = "item";
+div.innerText = item;
 
-const parser = new DOMParser();
-const doc = parser.parseFromString(html, "text/html");
-
-let rows = doc.querySelectorAll("table tbody tr");
-
-const table = document.querySelector("#trades tbody");
-table.innerHTML = "";
-
-let profits = [];
-let labels = [];
-
-rows.forEach(row => {
-
-let cols = row.querySelectorAll("td");
-
-if(cols.length > 2){
-
-let pair = cols[0].innerText;
-let direction = cols[1].innerText;
-let profit = cols[2].innerText;
-
-table.innerHTML += `
-<tr>
-<td>${pair}</td>
-<td>${direction}</td>
-<td>${profit}</td>
-</tr>
-`;
-
-profits.push(parseFloat(profit));
-labels.push(pair);
-
-}
+container.appendChild(div);
 
 });
 
-createChart(labels, profits);
-
 }
 
-catch(err){
+renderList(collection,"collectionList");
+renderList(wants,"wantsList");
 
-console.error(err);
+const search = document.getElementById("search");
 
-}
+if(search){
 
-}
+search.addEventListener("keyup", function(){
 
-function createChart(labels,data){
+const term = search.value.toLowerCase();
+const items = document.querySelectorAll(".item");
 
-const ctx = document.getElementById("profitChart");
+items.forEach(i=>{
 
-new Chart(ctx,{
-type:"line",
-data:{
-labels:labels,
-datasets:[{
-label:"Profit",
-data:data
-}]
-}
+i.style.display = i.innerText.toLowerCase().includes(term)
+? "block" : "none";
+
+});
+
 });
 
 }
-
-loadTrader();
-
-setInterval(loadTrader,300000);
