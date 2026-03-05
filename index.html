@@ -1,48 +1,52 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Vndyne's Trading List</title>
 <link rel="stylesheet" href="style.css">
-<script src="data.js"></script>
 </head>
+
 <body>
 
 <header>
 <h1>Vndyne's Trading List</h1>
-<p class="subtitle">Welcome! This site contains my personal trading archive exported from Encora.</p>
+<p class="tagline">Broadway • West End • Touring Archive</p>
+
+<div class="stats">
+<span id="totalCollection"></span>
+<span id="totalWants"></span>
+<span id="lastUpdated"></span>
+</div>
+
 </header>
 
-<div class="controls">
-<input id="search" placeholder="Search shows, cast, year..." />
+<section class="intro">
+<p>
+Welcome to my personal trading archive.  
+All recordings listed are for trading purposes only.
+</p>
 
-<select id="showFilter">
-<option value="">All Shows</option>
-</select>
+<button onclick="loadCollection()">Collection</button>
+<button onclick="loadWants()">Wants</button>
+<button onclick="importEncora()">Import Encora</button>
+</section>
 
-<select id="yearFilter">
-<option value="">All Years</option>
-</select>
+<section class="controls">
+
+<input id="search" placeholder="Search show, cast, theatre...">
 
 <select id="formatFilter">
 <option value="">All Formats</option>
-<option value="Video">Video</option>
-<option value="Audio">Audio</option>
-<option value="Proshot">Proshot</option>
+<option value="video">Video</option>
+<option value="audio">Audio</option>
+<option value="proshot">Proshot</option>
 </select>
-</div>
 
-<div id="list"></div>
+</section>
 
-<div id="popup" class="popup hidden">
-<div class="popup-content">
-<span id="close">&times;</span>
-<h2 id="popupTitle"></h2>
-<p id="popupDetails"></p>
-</div>
-</div>
+<section id="list"></section>
 
+<script src="data.js"></script>
 <script src="app.js"></script>
 
 </body>
