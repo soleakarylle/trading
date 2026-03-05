@@ -1,16 +1,30 @@
-async function loadTraderData() {
+const trades = [
+{pair:"BTCUSD",direction:"BUY",profit:120},
+{pair:"EURUSD",direction:"SELL",profit:-30},
+{pair:"NAS100",direction:"BUY",profit:80},
+{pair:"XAUUSD",direction:"BUY",profit:60}
+];
 
-    try {
-        const response = await fetch("trader.html");
-        const data = await response.text();
+const table = document.querySelector("#trades tbody");
 
-        document.getElementById("traderData").innerHTML = data;
+trades.forEach(t=>{
+let row = `<tr>
+<td>${t.pair}</td>
+<td>${t.direction}</td>
+<td>${t.profit}</td>
+</tr>`;
+table.innerHTML += row;
+});
 
-    } catch (error) {
-        document.getElementById("traderData").innerHTML =
-        "Trader data could not load.";
-    }
+const ctx = document.getElementById('profitChart');
 
+new Chart(ctx,{
+type:'line',
+data:{
+labels: trades.map(t=>t.pair),
+datasets:[{
+label:'Profit',
+data: trades.map(t=>t.profit)
+}]
 }
-
-loadTraderData();
+});
