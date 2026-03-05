@@ -1,123 +1,103 @@
+const list = document.getElementById("list");
 
-const data = (window.collection || []).concat(window.wants || [])
-const list = document.getElementById("list")
+document.getElementById("totalCollection").innerText =
+collection.length + " recordings";
 
-const search = document.getElementById("search")
-const showFilter = document.getElementById("showFilter")
-const yearFilter = document.getElementById("yearFilter")
-const formatFilter = document.getElementById("formatFilter")
+document.getElementById("totalWants").innerText =
+wants.length + " wants";
 
-const popup = document.getElementById("popup")
-const popupTitle = document.getElementById("popupTitle")
-const popupDetails = document.getElementById("popupDetails")
+document.getElementById("lastUpdated").innerText =
+"Last updated: " + new Date().toLocaleDateString();
 
-document.getElementById("close").onclick=()=>popup.classList.add("hidden")
+function groupByShow(data){
 
-function unique(field){
-return [...new Set(data.map(d=>d[field]).filter(Boolean))].sort()
+const grouped = {};
+
+data.forEach(r =>{
+
+if(!grouped[r.show]) grouped[r.show]=[];
+grouped[r.show].push(r);
+
+});
+
+return grouped;
 }
 
-function populateFilters(){
+function render(data){
 
-unique("show").forEach(v=>{
-let o=document.createElement("option")
-o.value=v
-o.textContent=v
-showFilter.appendChild(o)
-})
+list.innerHTML="";
 
-unique("year").forEach(v=>{
-let o=document.createElement("option")
-o.value=v
-o.textContent=v
-yearFilter.appendChild(o)
-})
-
-}
-
-populateFilters()
-
-function filterData(){
-
-return data.filter(d=>{
-
-let s=search.value.toLowerCase()
-
-if(s && !JSON.stringify(d).toLowerCase().includes(s)) return false
-if(showFilter.value && d.show!=showFilter.value) return false
-if(yearFilter.value && d.year!=yearFilter.value) return false
-if(formatFilter.value && d.format!=formatFilter.value) return false
-
-return true
-
-})
-
-}
-
-function groupByShow(items){
-
-const map={}
-
-items.forEach(i=>{
-
-if(!map[i.show]) map[i.show]=[]
-map[i.show].push(i)
-
-})
-
-return map
-
-}
-
-function render(){
-
-list.innerHTML=""
-
-const grouped = groupByShow(filterData())
+const grouped = groupByShow(data);
 
 Object.keys(grouped).sort().forEach(show=>{
 
-const group=document.createElement("div")
-group.className="show-group"
+const block = document.createElement("div");
+block.className="showBlock";
 
-const title=document.createElement("h2")
-title.textContent=show
+const title = document.createElement("div");
+title.className="showTitle";
 
-group.appendChild(title)
+title.innerHTML =
+show + "<span class='count'>(" +
+grouped[show].length +
+")</span>";
 
-grouped[show].forEach(rec=>{
+block.appendChild(title);
 
-const row=document.createElement("div")
-row.className="record"
+grouped[show].forEach(r=>{
 
-row.innerHTML=`
-<span>${rec.year||""}</span>
-<span class="tag">${rec.format||""}</span>
-${rec.nft?'<span class="tag nft">NFT</span>':''}
-${rec.nfs?'<span class="tag nfs">NFS</span>':''}
-`
+const row=document.createElement("div");
+row.className="record";
 
-row.onclick=()=>{
+let icon="🎥";
 
-popupTitle.textContent=show
-popupDetails.textContent=JSON.stringify(rec,null,2)
-popup.classList.remove("hidden")
+if(r.format.toLowerCase().includes("audio")) icon="🎧";
+
+let badge="";
+
+if(r.format.toLowerCase().includes("proshot"))
+badge="<span class='badge proshot'>PROSHOT</span>";
+
+row.innerHTML=
+"<div>"+icon+" "+r.date+" — "+r.venue+" "+badge+"</div>";
+
+block.appendChild(row);
+
+});
+
+list.appendChild(block);
+
+});
 
 }
 
-group.appendChild(row)
+function loadCollection(){
+render(collection);
+}
 
-})
+function loadWants(){
+render(wants);
+}
 
-list.appendChild(group)
+function importEncora(){
 
-})
+alert(
+"To update your site:\n\n1. Export Excel from Encora\n2. Upload it\n3. Regenerate data.js"
+);
 
 }
 
-search.oninput=render
-showFilter.onchange=render
-yearFilter.onchange=render
-formatFilter.onchange=render
+document
+.getElementById("search")
+.addEventListener("input",e=>{
 
-render()
+const term=e.target.value.toLowerCase();
+
+const filtered = collection.filter(r =>
+r.show.toLowerCase().includes(term) ||
+(r.cast && r.cast.toLowerCase().includes(term))
+);
+
+render(filtered);
+
+});
