@@ -1,103 +1,99 @@
-const list = document.getElementById("list");
 
-document.getElementById("totalCollection").innerText =
-collection.length + " recordings";
+function groupShows(data){
 
-document.getElementById("totalWants").innerText =
-wants.length + " wants";
+const shows={}
 
-document.getElementById("lastUpdated").innerText =
-"Last updated: " + new Date().toLocaleDateString();
+data.forEach(r=>{
+if(!shows[r.show]) shows[r.show]=[]
+shows[r.show].push(r)
+})
 
-function groupByShow(data){
-
-const grouped = {};
-
-data.forEach(r =>{
-
-if(!grouped[r.show]) grouped[r.show]=[];
-grouped[r.show].push(r);
-
-});
-
-return grouped;
+return shows
 }
 
-function render(data){
+function render(){
 
-list.innerHTML="";
+const search=document.getElementById("search").value.toLowerCase()
+const format=document.getElementById("formatFilter").value
+const year=document.getElementById("yearFilter").value
 
-const grouped = groupByShow(data);
+let filtered=recordings.filter(r=>{
+
+if(search && !JSON.stringify(r).toLowerCase().includes(search)) return false
+if(format && r.format!==format) return false
+if(year && r.year!=year) return false
+
+return true
+})
+
+const grouped=groupShows(filtered)
+const container=document.getElementById("shows")
+
+container.innerHTML=""
 
 Object.keys(grouped).sort().forEach(show=>{
 
-const block = document.createElement("div");
-block.className="showBlock";
+const div=document.createElement("div")
+div.className="show"
 
-const title = document.createElement("div");
-title.className="showTitle";
-
-title.innerHTML =
-show + "<span class='count'>(" +
-grouped[show].length +
-")</span>";
-
-block.appendChild(title);
+div.innerHTML="<h3>"+show+" ("+grouped[show].length+")</h3>"
 
 grouped[show].forEach(r=>{
 
-const row=document.createElement("div");
-row.className="record";
+let badges=""
 
-let icon="🎥";
+if(r.proshot) badges+='<span class="badge proshot">PROSHOT</span>'
+if(r.nft) badges+='<span class="badge nft">NFT</span>'
 
-if(r.format.toLowerCase().includes("audio")) icon="🎧";
+const row=document.createElement("div")
 
-let badge="";
+row.className="recording "+r.format.toLowerCase()
 
-if(r.format.toLowerCase().includes("proshot"))
-badge="<span class='badge proshot'>PROSHOT</span>";
+row.innerHTML=r.year+" | "+r.location+" | "+r.format+" "+badges
 
-row.innerHTML=
-"<div>"+icon+" "+r.date+" — "+r.venue+" "+badge+"</div>";
-
-block.appendChild(row);
-
-});
-
-list.appendChild(block);
-
-});
-
-}
-
-function loadCollection(){
-render(collection);
-}
-
-function loadWants(){
-render(wants);
-}
-
-function importEncora(){
-
+row.onclick=()=>{
 alert(
-"To update your site:\n\n1. Export Excel from Encora\n2. Upload it\n3. Regenerate data.js"
-);
+show+"\n"+
+r.year+" "+r.location+"\n"+
+"Cast: "+(r.cast||"unknown")+"\n"+
+"Master: "+(r.master||"unknown")
+)
+}
+
+div.appendChild(row)
+
+})
+
+container.appendChild(div)
+
+})
 
 }
 
-document
-.getElementById("search")
-.addEventListener("input",e=>{
+function populateYears(){
 
-const term=e.target.value.toLowerCase();
+const years=[...new Set(recordings.map(r=>r.year))].sort()
 
-const filtered = collection.filter(r =>
-r.show.toLowerCase().includes(term) ||
-(r.cast && r.cast.toLowerCase().includes(term))
-);
+const select=document.getElementById("yearFilter")
 
-render(filtered);
+years.forEach(y=>{
 
-});
+const o=document.createElement("option")
+o.value=y
+o.textContent=y
+select.appendChild(o)
+
+})
+
+}
+
+document.getElementById("search").oninput=render
+document.getElementById("formatFilter").onchange=render
+document.getElementById("yearFilter").onchange=render
+
+document.getElementById("importEncora").onclick=()=>{
+alert("Upload your Encora export and replace data.js")
+}
+
+populateYears()
+render()

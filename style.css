@@ -1,13 +1,14 @@
+
 body{
-background:#0d0d0d;
-color:#e5e5e5;
+background:#0e0e0e;
+color:#e8e8e8;
 font-family:Arial;
 margin:0;
 }
 
-header{
+.header{
 padding:40px;
-border-bottom:1px solid #333;
+border-bottom:1px solid #222;
 }
 
 h1{
@@ -15,27 +16,63 @@ font-size:36px;
 }
 
 h2{
-color:#ff4d4d;
+color:#ff3c3c;
 margin-top:40px;
 }
 
-section{
-padding:30px 40px;
+.controls{
+padding:20px 40px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
 }
 
-ul{
-line-height:1.8;
-}
-
-.status{
-color:#00d26a;
-font-weight:bold;
+input,select,button{
+padding:8px;
+background:#1a1a1a;
+color:white;
+border:1px solid #333;
 }
 
 .encora{
-background:#ff4d4d;
+background:#ff3c3c;
+padding:10px 14px;
 color:white;
-padding:10px 16px;
 text-decoration:none;
 border-radius:6px;
+}
+
+#shows{
+padding:30px 40px;
+}
+
+.show{
+margin-bottom:25px;
+border-bottom:1px solid #222;
+padding-bottom:15px;
+}
+
+.recording{
+padding:4px 0;
+cursor:pointer;
+}
+
+.badge{
+margin-left:6px;
+font-size:12px;
+padding:2px 6px;
+background:#333;
+border-radius:4px;
+}
+
+.video::before{content:"🎬 ";}
+.audio::before{content:"🎧 ";}
+
+.proshot{background:#b300ff;}
+.nft{background:#aa0000;}
+
+@media(max-width:700px){
+.header, section, #shows{
+padding:20px;
+}
 }
